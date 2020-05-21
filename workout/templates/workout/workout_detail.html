@@ -1,0 +1,110 @@
+{% extends 'workout/base.html' %}
+{% block content %}
+    {% load static %}
+    {% load mathfilters %}
+    {% if name_error %}
+        <div class="container-fluid error-banner">
+            <div class="row">
+                <div class="col-md-12">
+                    <pre></pre>
+                    <p class="error-banner-text text-center">You can't have two workouts of the same name!</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-8" style="color: white">
+                    <h1 class="heading">View the {{ workout_existing_name }} workout</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">{{ workout_existing_name }} Info<img class="slideRight" style="float:right" src="{% static 'workout/description.png' %}" alt="description image"></h3>
+                <hr class="reveal">
+                <p class="reveal">{{ workout_existing_desc }}</p>
+                <a href="{% url 'log:log_create' pk=workout.id %}" style="margin-right: 10px" class="btn btn-success reveal"><img style="width: 40%" src="{% static 'workout/log.png' %}" alt="log"> Log</a><a data-toggle="modal" style="margin-right: 10px; color: white" class="btn btn-primary reveal" data-target="#basicExampleModal"><img style="width: 40%" src="{% static 'workout/edit.png' %}" alt="edit"> Edit</a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">{{ workout_existing_name }} exercises <a href="{% url 'workout:exercise_add' pk=workout.id %}"><img id="myBtn" class="add" src="{% static 'workout/plus.png' %}" alt="add_button"></a><img class="slideRight" style="float:right" src="{% static 'workout/rowing.png' %}" alt="rowing image"></h3>
+                <hr class="reveal">
+                {% if workout_exercises %}
+                    <table style="width:100%" class="table table-hover table-dark reveal">
+                        <tr>
+                            <th scope="col"><p>Exercise name</p></th>
+                            <th scope="col" class="text-right"><p>Delete</p></th>
+                        </tr>
+                        {% for exercise in workout_exercises %}
+                            <tr>
+                                <td><p style='display: inline'>{{ exercise.exercise.exercise_name }}</p></td>
+                                <td><a href="{% url 'workout:exercise_delete' pk=workout.id exercise_pk=exercise.id %}"><img class="delete" style="float:right; width: 25px" src="{% static 'workout/delete.png' %}" alt="delete button"></a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p class="reveal">Press the + button to add exercises!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">Statistics <img class="slideRight" style="float:right" src="{% static 'workout/line_chart.png' %}" alt="line chart image"></h3>
+                <hr class="reveal" style="background-color: white; opacity: 80%"/>
+                {% if last_workout %}
+                    <p class="reveal">Last workout: {{ last_workout.closed_at }}</p>
+                    <p class="reveal">Completed workouts: {{ total_logs_count }}</p>
+                    <p class="reveal">Total volume of last workout: {{ workout_volume }} lbs</p>
+                {% else %}
+                    <p class="reveal">You have not logged this workout yet!</p>
+                {% endif %}
+                {% if volumes %}
+                    <canvas style="margin-top: 5%; margin-bottom: 5%;" id="lineChart" width="100%" height="50%"></canvas>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">Edit workout</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color: grey">&times;</span>
+                    </button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                            {% csrf_token %}
+                            {% if name_error %}
+                                <p class="error">You cannot have two workouts of the same name!</p>
+                            {% endif %}
+                            {% for error in form.workout_name.errors %}
+                                <p class="error">{{ error }}</p>
+                            {% endfor %}
+                            <p>Routine name</p>
+                            <p class="form-field">{{ form.workout_name }}</p>
+                            {% for error in form.workout_desc.errors %}
+                                <p class="error">{{ error }}</p>
+                            {% endfor %}
+                            <p>Routine description</p>
+                            <p class="form-field">{{ form.workout_desc }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

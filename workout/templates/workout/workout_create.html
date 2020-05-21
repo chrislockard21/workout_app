@@ -1,0 +1,60 @@
+{% extends 'workout/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-6" style="color: white">
+                    <h1 class="heading reveal">Create your workout</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer reveal">
+                <h3>Create your workout workout</h3>
+                <hr style="background-color: white; opacity: 80%"/>
+                <p>Create your custom workout workout here. All of your workouts must have a unique name so that we can keep better log of your workout statistics. See the list below for your existing workouts.</p>
+                <pre></pre>
+                <button type="button" class="collapsible"><h3 style="display: inline">My existing workouts</h3></button>
+                <div class="content">
+                    <pre></pre>
+                    {% if existing_workouts %}
+                        {% for workout in existing_workouts %}
+                            <p>{{ workout }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p>You do not have any workouts yet!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer reveal">
+                <form method="post" id="workoutForm">
+                    {% if name_error %}
+                        <p class="error">You cannot have two workouts of the same name!</p>
+                    {% endif %}
+                    {% if valid_error %}
+                        <p class="error">The form was invalid, please ensure that you are entering valid text!</p>
+                    {% endif %}
+                    {% csrf_token %}
+                    <h5>Routine name</h5>
+                    {% for error in form.workout_name.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                    <p class="form-field">{{ form.workout_name }}</p>
+                    <pre></pre>
+                    <h5>Routine description</h5>
+                    {% for error in form.workout_desc.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                    <p class="form-field">{{ form.workout_desc }}</p>
+                    <pre></pre>
+                    <button style="margin-right: 2%;" type="submit" class="btn btn-primary">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

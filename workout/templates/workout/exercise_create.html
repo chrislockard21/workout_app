@@ -1,0 +1,42 @@
+{% extends 'workout/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-6" style="color: white">
+                    <h1 class="heading reveal">Add exercises</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container reveal">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3>Add your exercises to {{ workout.workout_name }} here</h3>
+                <hr style="background-color: white; opacity: 80%"/>
+                <p>You can select as many exercises as you want for your workout. If an exercise that you want is not listed, you can make a request for us to add it!</p>
+                <form action="/workout/{{ workout.id }}/exercise_add/" method="POST">
+                    {% csrf_token %}
+                    {% for type, exercises in exercise_dict.items %}
+                        <button type="button" class="collapsible"><h4 style="display: inline">{{ type }}</h4></button>
+                        <div class="content">
+                            {% for exercise in exercises %}
+                                <div>
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="{{ exercise.id }}" style="margin-top:10px; margin-right: 10px" />
+                                        <span><p style="display: inline">{{ exercise.exercise_name }}</p></span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <pre>
+                    </pre>
+                    <button style="margin-right: 2%;" type="submit" class="btn btn-primary">Add</button>
+                    <!-- <a href="#" class='btn btn-success'>Request Exercise</a> -->
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

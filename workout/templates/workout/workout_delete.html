@@ -1,0 +1,19 @@
+{% extends 'workout/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="container" style="padding-bottom: 30%">
+        <div class="row justify-content-md-center">
+            <div class="col-md-6">
+                <div style="padding-top: 15%" class="contentContainer">
+                    <form method="post">
+                        {% csrf_token %}
+                        <h3>Are you sure that you want to delete the "{{ object.workout_name }}" workout?</h3>
+                        <hr style="background-color: white; opacity: 80%"/>
+                        <p>Note that if you delete this workout, you will delete the exercises associated with it and thus the log for those exercises under this workout.</p>
+                        <input style="margin-right: 2%;" class="btn btn-outline-danger" type="submit" value="Delete"><input class="btn btn-outline-primary" type="submit" name="cancel" value="Cancel"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

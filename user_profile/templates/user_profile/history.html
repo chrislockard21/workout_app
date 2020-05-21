@@ -1,0 +1,116 @@
+{% extends 'user_profile/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-8" style="color: white">
+                    <h1 class="heading">Complete history</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">History</h3>
+                <hr class="reveal">
+                <p class="reveal">If it's not here, we don't have it... ¯\_(ツ)_/¯</p>
+                <pre></pre>
+                {% if log_set_history %}
+                    {% for log, sets in log_set_history.items %}
+                        <button type="button" class="collapsible reveal"><p style="display: inline">{{ log }}</p></button>
+                        <div class="content">
+                            {% if sets %}
+                                <pre></pre>
+                                {% for set in sets %}
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p><strong>Set: {{ set.created_at }}</strong></p>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <p style="margin-bottom: 5px">Reps</p>
+                                                    <p>{{ set.reps }}</p>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <p style="margin-bottom: 5px">Weight</p>
+                                                    <p>{{ set.weight }} {{ set.units }}</p>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <p style="margin-bottom: 5px">Difficulty</p>
+                                                    {% if set.difficulty == 'E' %}
+                                                        <p style="color: green">Easy</p>
+                                                    {% elif set.difficulty == 'H' %}
+                                                        <p style="color: red">Hard</p>
+                                                    {% else %}
+                                                        <p style="color: yellow">In the middle</p>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p style="margin-bottom: 5px">Notes</p>
+                                                    {% if set.notes == '' %}
+                                                        <p>No notes to display</p>
+                                                    {% else %}
+                                                        <p>{{ set.notes }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <pre></pre>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div>
+                                    <pre></pre>
+                                    <p>You did not log any sets for this log!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="reveal">You have not created any logs yet!</p>
+                {% endif %}
+                <pre></pre>
+                <a href="{% url 'user_profile:history' %}" class="btn btn-primary">Complete history</a>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">Create workout</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color: grey">&times;</span>
+                    </button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                            {% csrf_token %}
+                            {{ formset.management_form }}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>Exercise</p>
+                                    <p class="form-field">{{ form.exercise }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p>Weight</p>
+                                    <p class="form-field">{{ form.weight }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p>Unit</p>
+                                    <p class="form-field">{{ form.unit }}</p>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'user_profile/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-8" style="color: white">
+                    <h1 class="heading">ORM Bulk Edit</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">User info</h3>
+                <hr class="reveal">
+                <p class="reveal">Email: {{ user.email }}</p>
+                <p class="reveal">Join date: {{ user.date_joined }}</p>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">One rep max</h3>
+                <pre></pre>
+                <form method="post" class="reveal">
+                    {% csrf_token %}
+                    <p>{{formset.errors}}</p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col"><h5>Exercise</h5></th>
+                                <th scope="col"><h5>Weight</h5></th>
+                                <th scope="col"><h5>Unit</h5></th>
+                                <th scope="col"><h5>Delete</h5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in formset %}
+                                <tr>
+                                    {% for hidden in form.hidden_fields %}
+                                        {{hidden}}
+                                    {% endfor %}
+                                    <th><p class="form-field">{{ form.exercise }}</p></th>
+                                    <td><p class="form-field">{{ form.weight }}</p></td>
+                                    <td><p class="form-field">{{ form.unit }}</p></td>
+                                    <td><p class="form-field">{{ form.DELETE }}</p></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary" name="button">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

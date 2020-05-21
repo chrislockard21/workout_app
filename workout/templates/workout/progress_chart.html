@@ -1,0 +1,38 @@
+<script type="text/javascript">
+    const CHART = document.getElementById('lineChart');
+    let lineChart = new Chart(CHART, {
+        type: 'line',
+        data: data = {
+            labels: [
+                {% for label in labels %}
+                    '{{ label.date }}',
+                {% endfor %}
+            ],
+            datasets: [
+                {
+                    label: "Recent workouts",
+                    fill: false,
+                    borderColor: '#b3b3b3',
+                    pointBackgroundColor: '#b3b3b3',
+                    data: {{ volumes|safe }}
+                }
+            ]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Volume (lbs)'
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Day of workout (last 5)'
+                    }
+                }]
+            }
+        }
+    })
+</script>

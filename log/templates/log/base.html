@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+    {% include "home/base_elements/_head.html" %}
+    <link href='http://fonts.googleapis.com/css?family=Coming+Soon' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'log/css/main.css' %}">
+    <style>
+        .banner {
+            background-image: url({% static 'log/plates_banner.jpg' %});
+            background-size: cover;
+        }
+    </style>
+    <body>
+        {% include "home/base_elements/_nav.html" %}
+        {% block content %}
+        {% endblock %}
+        {% include "home/base_elements/_footer.html" %}
+        <!-- Imports required JS files -->
+        {% include "home/base_elements/_script_imports.html" %}
+    </body>
+</html>

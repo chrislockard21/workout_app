@@ -1,0 +1,161 @@
+{% extends 'home/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-5" style="color: white">
+                    <h1 class="heading">Workout App</h1>
+                    <h5>Helping people create workouts they are excited for.</h5>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'home:login' %}" class="btn btn-primary">Get started</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">Create workout</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color: grey">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'workout:workout_create' %}" method="post">
+                        {% csrf_token %}
+                        {% if name_error %}
+                            <p class="error">You cannot have two workouts of the same name!</p>
+                        {% endif %}
+                        {% if valid_error %}
+                            <p class="error">The form was invalid, please ensure that you are entering valid text!</p>
+                        {% endif %}
+                        {% csrf_token %}
+                        <h5>Routine name</h5>
+                        {% for error in form.workout_name.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                        <p class="form-field">{{ form.workout_name }}</p>
+                        <pre></pre>
+                        <h5>Routine description</h5>
+                        {% for error in form.workout_desc.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                        <p class="form-field">{{ form.workout_desc }}</p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-10 contentContainer">
+                {% if user.is_authenticated %}
+                    <h1 class="reveal">My workouts <a data-toggle="modal" data-target="#basicExampleModal"><img class="add" src="{% static 'home/plus.png' %}" alt="add button"></a><img class="text-right slideRight" style="float:right; margin-top: 10px" src="{% static 'home/running.png' %}" alt="running man"></h1>
+                    <hr class="reveal">
+                    {% if workouts %}
+                        <div class="row justify-content-md-center">
+                            {% for workout, exercise_list in workouts.items %}
+                                {% if forloop.counter|divisibleby:2 %}
+                                    <div class="col-md-6 contentContainer right">
+                                {% else %}
+                                    <div class="col-md-6 contentContainer left">
+                                {% endif %}
+                                        <div style="border-radius: 5px; background-color: #313131">
+                                            <div style="padding: 5%">
+                                                <h2><a href="{{ workout.get_absolute_url }}" class="workout-title">{{ workout }}</a></h2>
+                                                <pre></pre>
+                                                <!-- <hr> -->
+                                                <h5>Description</h5>
+                                                <p>{{ workout.workout_desc }}</p>
+                                                <pre></pre>
+                                                <div class="show-exercises" style="cursor:pointer;">
+                                                    <h5>Exercises ({{ exercise_list|length }})<img class="pointer" style="float: right" src="{% static 'home/up_arrow.png' %}" alt="arrow"></h5>
+                                                    <div class="exercise-list" style="display: none;">
+                                                        {% if exercise_list %}
+                                                            {% for exercise in exercise_list %}
+                                                                <p>{{ exercise.exercise.exercise_name }}</p>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            <p>You do not have any exercises yet!</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <pre></pre>
+                                                <a href="{% url 'log:log_create' pk=workout.id %}" style="margin-right: 10px" class="btn btn-success"><img style="width: 40%" src="{% static 'home/log.png' %}" alt="log"> Log</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="reveal">You do not have any workouts yet!</p>
+                    {% endif %}
+                {% else %}
+                    <h1 class="reveal">My workouts<img class="text-right slideRight" style="float:right; margin-top: 10px" src="{% static 'home/running.png' %}" alt="running man"></h1>
+                    <hr class="reveal">
+                    <p class="reveal">{{ workout_message }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-6 contentContainer">
+                <h1 class="left">Open logs <img class="text-right slideRight" style="float:right; margin-top: 10px" src="{% static 'home/log.png' %}" alt="clip board"></h1>
+                <hr class="left">
+                {% if user.is_authenticated %}
+                    {% if log_set %}
+                        {% for log, info_list in log_set.items %}
+                            <div class="left" style="background-color: #313131; border-radius: 10px">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div style="padding: 5%">
+                                            <h3><a class="workout-title" href="{% url 'log:log_detail' log_pk=log.id %}">{{ log.workout.workout_name }}</a></h3>
+                                            <pre></pre>
+                                            <p>Date created: {{ log.created_at.date }}</p>
+                                            <pre></pre>
+                                            <a href="{% url 'log:log_close' log_pk=log.id %}" class="btn btn-danger">Close</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div style="padding: 5%">
+                                            <p>Exercises: {{ info_list.1 }}</p>
+                                            <p>Current sets logged: {{ info_list.0 }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <pre></pre>
+                        {% endfor %}
+                    {% else %}
+                        <p class="left">You do not have any logs yet!</p>
+                    {% endif %}
+                {% else %}
+                    <p class="left">{{ logging_message }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-4 contentContainer">
+                <h1 class="right">Statistics <img class="text-right slideRight" style="float:right; margin-top: 10px" src="{% static 'home/line_chart.png' %}" alt="line chart"></h1>
+                <hr class="right">
+                {% if user.is_authenticated %}
+                    <p class="right">Here are some general statistics on your time here. You can also view them for specific workouts or individual exercises!</p>
+                    <p class="right">Completed logs: {{ log_count }}</p>
+                    <p class="right">Open logs: {{ open_log_count }}</p>
+                    <p class="right">Most used: {{ max_exercise.0 }} ({{ max_exercise.1 }})</p>
+                    <p class="right">Total volume: {{ volume }} lbs</p>
+                    <!-- <a class="btn btn-primary right" href="#">Exercise stats</a> -->
+                {% else %}
+                    <p class="right">{{ statistics_message }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

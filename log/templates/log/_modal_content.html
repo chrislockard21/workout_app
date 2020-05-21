@@ -1,0 +1,82 @@
+<div class="container">
+    <pre></pre>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-4 text-center weightButton" onclick="addPlate(45)" style="border: 1px solid grey">
+                    <p style="padding: 15px; margin: auto">Bar</p>
+                </div>
+                <div class="col-md-4 text-center weightButton" onclick="addPlate(45)" style="border: 1px solid grey">
+                    <p style="padding: 15px; margin: auto">45</p>
+                </div>
+                <div class="col-md-4 text-center weightButton" onclick="addPlate(35)" style="border: 1px solid grey">
+                    <p style="padding: 15px; margin: auto">35</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 text-center weightButton" onclick="addPlate(25)" style="border: 1px solid grey">
+                    <p style="padding: 15px; margin: auto">25</p>
+                </div>
+                <div class="col-md-4 text-center weightButton" onclick="addPlate(10)" style="border: 1px solid grey">
+                    <p style="padding: 15px; margin: auto">10</p>
+                </div>
+                <div class="col-md-4 text-center weightButton" onclick="addPlate(5)" style="border: 1px solid grey">
+                    <p style="padding: 15px; margin: auto">5</p>
+                </div>
+            </div>
+            {% if pr %}
+                <pre></pre>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>PR {{ pr.weight }}{{ pr.unit }}</p>
+                        <hr>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 1.00)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">100%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.95)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">95%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.90)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">90%</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.85)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">85%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.80)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">80%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.75)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">75%</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.70)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">70%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.65)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">65%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.60)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">60%</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.55)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">55%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.50)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">50%</p>
+                    </div>
+                    <div class="col-md-4 text-center weightButton" onclick="addPlate({{ pr.weight }}, 0.45)" style="border: 1px solid grey">
+                        <p style="padding: 15px; margin: auto">45%</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

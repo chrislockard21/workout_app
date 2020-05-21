@@ -1,0 +1,88 @@
+{% extends 'workout/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-6" style="color: white">
+                    <h1 class="heading">Edit the {{ workout.workout_name }} workout</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <div class="contentContainer">
+                    <h3 class="reveal">Actions <img class="slideRight" style="float:right" src="{% static 'workout/actions.png' %}" alt="action image"></h3>
+                    <hr class="reveal">
+                    <a href="{% url 'workout:workout_delete' pk=workout.id %}" style="margin-right: 10px" class="btn btn-danger reveal"><img style="width: 30%" src="{% static 'workout/delete.png' %}" alt="log"> Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <div class="contentContainer">
+                    <h3 class="reveal">Routine Info <img class="slideRight" style="float:right" src="{% static 'workout/description.png' %}" alt="description image"></h3>
+                    <hr class="reveal">
+                    <form class="" method="post">
+                        {% csrf_token %}
+                        {% if name_error %}
+                            <p class="error reveal">You cannot have two workouts of the same name!</p>
+                        {% endif %}
+                        {% for error in form.workout_name.errors %}
+                            <p class="error reveal">{{ error }}</p>
+                        {% endfor %}
+                        <p class="reveal">Routine name</p>
+                        <p class="reveal form-field">{{ form.workout_name }}</p>
+                        {% for error in form.workout_desc.errors %}
+                            <p class="error reveal">{{ error }}</p>
+                        {% endfor %}
+                        <p class="reveal">Routine description</p>
+                        <p class="reveal form-field">{{ form.workout_desc }}</p>
+                        <button class="btn btn-primary reveal" style="margin-right: 1%" type="submit" name="button">Save</button><a class="btn btn-danger reveal" href="{% url 'workout:workout_detail' pk=workout.id %}">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">{{ workout.workout_name }} exercises <a href="{% url 'workout:exercise_add' pk=workout.id %}"><img id="myBtn" class="add" src="{% static 'workout/plus.png' %}" alt="add_button"></a><img class="slideRight" style="float:right" src="{% static 'workout/rowing.png' %}" alt="rowing image"></h3>
+                <hr class="reveal">
+                {% if workout_exercises %}
+                    <table style="width:100%" class="table table-hover table-dark reveal">
+                        <tr>
+                            <th scope="col"><p>Exercise name</p></th>
+                            <th scope="col" class="text-right"><p>Delete</p></th>
+                        </tr>
+                        {% for exercise in workout_exercises %}
+                            <tr>
+                                <td><p style='display: inline'>{{ exercise.exercise.exercise_name }}</p></td>
+                                <td><a href="{% url 'workout:exercise_delete' pk=workout.id exercise_pk=exercise.id %}"><img class="delete" style="float:right; width: 25px" src="{% static 'workout/delete.png' %}" alt="delete button"></a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>Press the + button to add exercises!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">Statistics <img class="slideRight" style="float:right" src="{% static 'workout/line_chart.png' %}" alt="line chart image"></h3>
+                <hr class="reveal">
+                {% if last_workout %}
+                    <p class="reveal">Last workout: {{ last_workout.closed_at }}</p>
+                    <p class="reveal">Completed workouts: {{ total_logs_count }}</p>
+                    <p class="reveal">Total volume of last workout: {{ volume }} lbs</p>
+                {% else %}
+                    <p class="reveal">You have not logged this workout yet!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

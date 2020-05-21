@@ -1,0 +1,225 @@
+{% extends 'log/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-5" style="color: white">
+                    <h1 class="heading reveal">Logging {{ log.workout.workout_name }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h3 class="reveal">Logging: {{ log.workout.workout_name }}</h3>
+                <h3 class="reveal">Exercise: {{ exercise.exercise.exercise_name }}</h3>
+                <hr class="reveal">
+                <p class="reveal">Use the form below to add sets to your exercise. You can find 5 of your most recent sets below for this exercise.</p>
+                <button type="button" style="font-size: 12pt" class="collapsible reveal">{{ exercise.exercise.exercise_name }} history</button>
+                <div class="content">
+                    <pre></pre>
+                    {% if history %}
+                        {% for set in history %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p><strong>Set: {{ set.created_at }}</strong></p>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <p style="margin-bottom: 5px">Reps</p>
+                                            <p>{{ set.reps }}</p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <p style="margin-bottom: 5px">Weight</p>
+                                            <p>{{ set.weight }} {{ set.units }}</p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <p style="margin-bottom: 5px">Difficulty</p>
+                                            {% if set.difficulty == 'E' %}
+                                                <p style="color: green">Easy</p>
+                                            {% elif set.difficulty == 'H' %}
+                                                <p style="color: red">Hard</p>
+                                            {% else %}
+                                                <p style="color: yellow">In the middle</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p style="margin-bottom: 5px">Notes</p>
+                                            {% if set.notes == '' %}
+                                                <p>No notes to display</p>
+                                            {% else %}
+                                                <p>{{ set.notes }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <pre></pre>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No history to display</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p class="reveal">Reps</p>
+                                <p class="form-field reveal">{{ form.reps }}</p>
+                                {% for error in form.reps.errors %}
+                                    <p class="error reveal">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                <p class="reveal">Weight <img class="add" id="myBtn" src="{% static 'log/plus.png' %}" alt="add plates" style="width: 20px"></p>
+                                <p class="form-field reveal">{{ form.weight }}</p>
+                                {% for error in form.weight.errors %}
+                                    <p class="error reveal">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-2">
+                                <p class="reveal">Units</p>
+                                <p class="form-field reveal">{{ form.unit }}</p>
+                                {% for error in form.unit.errors %}
+                                    <p class="error reveal">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-2">
+                                <p class="reveal">Difficulty</p>
+                                <p class="form-field reveal">{{ form.difficulty }}</p>
+                                {% for error in form.difficulty.errors %}
+                                    <p class="error reveal">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="reveal">Notes</p>
+                                <p class="form-field reveal">{{ form.notes }}</p>
+                                {% for error in form.notes.errors %}
+                                    <p class="error reveal">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <button style="margin-right: 2%;" type="submit" class="btn btn-primary reveal">Add set</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <div id="myModal" class="modal">
+                  <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        {% include 'log/_modal_content.html' %}
+                    </div>
+                </div>
+                <h3 class="reveal">Completed sets</h3>
+                <hr class="reveal">
+                {% if sets %}
+                    {% for set in sets %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="reveal">Set #{{forloop.counter}} <a href="{% url 'log:set_delete' exercise_pk=set.exercise.id set_pk=set.id log_pk=log.id %}"><img class="delete" style="width: 25px" src="{% static 'workout/delete.png' %}" alt="delete button"></a></h4>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p class="reveal" style="margin-bottom: 5px">Reps</p>
+                                        <p class="reveal">{{ set.reps }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p class="reveal" style="margin-bottom: 5px">Weight</p>
+                                        <p class="reveal">{{ set.weight }} {{ set.units }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p class="reveal" style="margin-bottom: 5px">Difficulty</p>
+                                        {% if set.difficulty == 'E' %}
+                                            <p class="reveal" style="color: green">Easy</p>
+                                        {% elif set.difficulty == 'H' %}
+                                            <p class="reveal" style="color: red">Hard</p>
+                                        {% else %}
+                                            <p class="reveal" style="color: yellow">In the middle</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="reveal" style="margin-bottom: 5px">Notes:</p>
+                                        {% if set.notes == '' %}
+                                            <p class="reveal">No notes to display</p>
+                                        {% else %}
+                                            <p class="reveal">{{ set.notes }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <pre></pre>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="reveal">You have not logged any sets yet!</p>
+                {% endif %}
+                <pre></pre>
+                <a class="btn btn-light reveal" href="{% url 'log:log_detail' log_pk=log.id %}">Back to log</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on the button, open the modal
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        var weightInput = document.getElementById('id_weight');
+
+        function addPlate(weight, percent) {
+            var buttonValue = parseFloat(weight);
+            var weightValue = parseFloat(weightInput.value);
+            var prPercent = parseFloat(percent);
+            if (Number.isNaN(prPercent)) {
+                weightInput.value = weightValue + buttonValue;
+            } else {
+                weightInput.value = weightValue + (buttonValue * prPercent);
+            };
+
+        };
+
+        function addPercentPlate(percent, weight) {
+            var weightValue = parseFloat(weightInput.value);
+            console.log(weightValue)
+            weightInput.value = weightValue + (weight * percent);
+        };
+    </script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'log/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-5" style="color: white">
+                    <h1 class="heading">Logging {{ log.workout.workout_name }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <div class="contentContainer">
+                    <h3>{{ log.workout.workout_name }} log</h3>
+                    <hr style="background-color: white; opacity: 80%"/>
+                    <p>Select an exercise to add sets too. To give you full control over your workout, the sets saved to each exercise are independant to the workout. This means that if you edit the workout later, you will still have your data from the previous exercise.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <div class="contentContainer">
+                    <h3>Exercises</h3>
+                    <hr style="background-color: white; opacity: 80%"/>
+                    {% if exercise_list %}
+                        <table style="width:100%" class="table table-hover table-dark">
+                            <tr>
+                                <th scope="col"><p>Exercise name</p></th>
+                                <th scope="col"><p>Current sets</p></th>
+                                <th scope="col"><p>Volume</p></th>
+                                <th scope="col" class="text-right"><p>Track</p></th>
+                            </tr>
+                            {% for exercise, set_count, volume in exercise_list %}
+                                <tr>
+                                    <td><p style='display: inline'>{{ exercise.exercise.exercise_name }}</p></td>
+                                    <td><p style="display: inline">{{ set_count }}</p></td>
+                                    <td><p style="display: inline">{{ volume }} lbs</p></td>
+                                    <td><a href="{% url 'log:log_exercise_set_add' log_pk=log.id exercise_pk=exercise.id %}"><img id="edit" style="width: 20px; float: right;" src="{% static 'log/edit.png' %}" alt="edit image, click here to edit your exercise sets"></a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <p>You have no exercises to log</p>
+                    {% endif %}
+                    <pre></pre>
+                    <a class="btn btn-danger" href="{% url 'log:log_close' log_pk=log.id %}">Close</a>
+                    <pre>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
