@@ -1,5 +1,5 @@
 from django.urls import path, include
-from workout.views import WorkoutCreate, WorkoutDetail, WorkoutDelete, ExerciseDelete, ExerciseCreate
+from workout.views import WorkoutCreate, WorkoutDetail, WorkoutDelete, ExerciseDelete, ExerciseCreate, WorkoutEdit
 
 app_name = 'workout'
 
@@ -10,5 +10,5 @@ urlpatterns = [
     path('workout_delete/<int:pk>/', WorkoutDelete.as_view(), name='workout_delete'),
     path('<int:pk>/exercise_delete/<int:exercise_pk>/', ExerciseDelete.as_view(), name='exercise_delete'),
     path('<int:pk>/exercise_add/', ExerciseCreate.as_view(), name='exercise_add'),
-    # path('edit/<int:pk>/', WorkoutEdit.as_view(), name='workout_edit')
+    path('workout_edit/<int:pk>/', WorkoutEdit.as_view(), name='workout_edit')
 ]

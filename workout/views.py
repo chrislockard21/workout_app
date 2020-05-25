@@ -20,19 +20,6 @@ from log.models import Log, Set
 
 # ------------------------------------------------------------------------------
 
-
-def log_volume(log):
-    '''Function to caluclate volume of a log'''
-    volume = 0
-    log_sets = Set.objects.filter(log=log)
-    for set in log_sets:
-        if set.unit == 'lbs':
-            volume += set.weight*set.reps
-        else:
-            volume += set.weight*2.20462*set.reps
-    return volume
-
-
 class WorkoutInfo():
     '''Class to gather information on a workout'''
     def __init__(self, request, pk):
@@ -63,7 +50,6 @@ class WorkoutInfo():
         else:
             return logs_ordered
 
-
 # Views ------------------------------------------------------------------------
 
 class WorkoutCreate(LoginRequiredMixin, View):
@@ -75,19 +61,6 @@ class WorkoutCreate(LoginRequiredMixin, View):
     template_name = 'workout/workout_create.html'
     login_url = 'home:login'
     form_class = WorkoutCreationForm
-
-    def get(self, request):
-        '''Creates the GET method for the create view. This method will only
-        be used for errors on the index modal'''
-        # Instantiate the class form and formsets to be passed to the template
-        existing_workouts = Workout.objects.filter(user=self.request.user)
-        context = {
-            'form': self.form_class(None),
-            'existing_workouts': existing_workouts,
-            'name_error': False,
-        }
-        # Renders the workout creation template with the above context
-        return render(request, self.template_name, context)
 
     def post(self, request):
         '''
@@ -135,138 +108,111 @@ class WorkoutCreate(LoginRequiredMixin, View):
             }
             return render(request, self.template_name, context)
 
-class WorkoutDetail(LoginRequiredMixin, View):
-    '''
-    Renders the detail page for a workout
-
-    Set, log, or workout if non-existent are returned in empty lists. Some of
-    the django query methods will error if the objects do not exist.
-    '''
+class WorkoutDetail(LoginRequiredMixin, generic.detail.DetailView):
+    model = Workout
     template_name = 'workout/workout_detail.html'
-    login_url = 'home:login'
     form_class = WorkoutCreationForm
+    login_url = 'home:login'
 
-    def get(self, request, pk):
-        '''Creates the GET method for the detail view'''
-        workout = Workout.objects.get(id=pk)
-        if workout.user == self.request.user:
-            # Initializes the workout info object
-            workout_info = WorkoutInfo(request, pk)
-            # Creates the form with the info from workout
-            form = self.form_class(instance=workout)
-            # Gets the logs for graphing
-            graph_logs = workout_info.get_graph_logs()
+    def total_volume(self, logs):
+        '''Function to caluclate volume of all logs'''
+        workout_volume = 0
+        for log in logs:
+            log_sets = Set.objects.filter(log=log)
+            for set in log_sets:
+                if set.unit == 'lbs':
+                    workout_volume += set.weight*set.reps
+                else:
+                    workout_volume += set.weight*2.20462*set.reps
+        return workout_volume
 
-            # Gets the total volume for the workout
-            workout_volume = 0
-            for log in workout_info.logs:
-                workout_volume += log_volume(log)
+    def get_log_volume(self, log):
+        '''Gets volume of a log'''
+        log_volume = 0
+        log_sets = Set.objects.filter(log=log)
+        for set in log_sets:
+            if set.unit == 'lbs':
+                log_volume += set.weight*set.reps
+            else:
+                log_volume += set.weight*2.20462*set.reps
+        return log_volume
 
-            # Unpacks data for chart.js
-            labels = []
-            volumes = []
-            for log in graph_logs:
-                volumes.append(log_volume(log))
-                labels.append(log.created_at)
-
-            context = {
-                'workout': workout,
-                'workout_exercises': workout_info.get_workout_exercises(),
-                'total_logs_count': workout_info.get_log_count(),
-                'last_workout': workout_info.get_latest_log(),
-                'workout_existing_name': workout_info.workout.workout_name,
-                'workout_existing_desc': workout_info.workout.workout_desc,
-                'workout_volume': workout_volume,
-                'volumes': volumes,
-                'labels': labels,
-                'form': form,
-                'name_error': False
-            }
-            return render(request, self.template_name, context)
-
+    def get_chart_data(self, logs):
+        '''Gets data for chart.js plot'''
+        logs_ordered = logs.reverse()
+        if len(logs_ordered) >= 5:
+            graph_logs = logs_ordered[len(logs_ordered) - 5:]
         else:
-            return Http404('This is not your workout.')
+            graph_logs = logs_ordered
+
+        labels = []
+        volumes = []
+        for log in graph_logs:
+            volumes.append(self.get_log_volume(log))
+            labels.append(log.created_at)
+
+        return (volumes, labels)
+
+    def get_object(self, queryset=None):
+        '''Ensures the user owns the object'''
+        obj = super(WorkoutDetail, self).get_object(queryset=queryset)
+        if obj.user != self.request.user:
+            raise Http404
+        return obj
+
+    def get_context_data(self, **kwargs):
+        '''Returns the context data for the workout'''
+        context = super(WorkoutDetail, self).get_context_data(**kwargs)
+        workout = self.get_object()
+        context['exercises'] = Exercise.objects.filter(workout=workout)
+        logs = Log.objects.filter(workout=workout, status='closed').order_by('-created_at')
+        context['completed_workouts'] = logs.count()
+        if len(logs) > 0:
+            context['last_workout'] = logs[0]
+        else:
+            context['last_workout'] = None
+        context['workout_volume'] = '{:,}'.format(self.total_volume(logs))
+        context['chart_data'] = self.get_chart_data(logs)
+        context['form'] = self.form_class(instance=workout)
+        return context
+
+class WorkoutEdit(LoginRequiredMixin, View):
+    template_name = 'workout/workout_edit.html'
+    form_class = WorkoutCreationForm
+    login_url = 'home:login'
 
     def post(self, request, pk):
-        workout_existing = Workout.objects.get(id=pk)
-        if workout_existing.user == self.request.user:
-            workout_existing_name = workout_existing.workout_name
-
-            # Passes the form information into the workout form and exercise
-            # formset for processing
-            form = self.form_class(self.request.POST, instance=workout_existing)
-
-            # Checks if the forms are valid
+        existing_workout = get_object_or_404(Workout, id=pk)
+        if existing_workout.user == request.user:
+            existing_workout_name = existing_workout.workout_name
+            form = self.form_class(self.request.POST, instance=existing_workout)
             if form.is_valid():
                 workout = form.save(commit=False)
-                # Gets existing workout names
                 existing_workout_names = Workout.objects.filter(user=self.request.user).values_list('workout_name', flat=True)
-
-                if form.cleaned_data['workout_name'] == workout_existing_name:
+                if form.cleaned_data['workout_name'] == existing_workout_name:
                     workout.save()
                     kwargs = {
                         'pk': pk,
                     }
                     return HttpResponseRedirect(reverse('workout:workout_detail', kwargs=kwargs))
 
-                elif form.cleaned_data['workout_name'] in existing_workout_names:
-                    workout = Workout.objects.get(id=pk)
-                    if workout.user == self.request.user:
-                        # Initializes the workout info object
-                        workout_info = WorkoutInfo(request, pk)
-                        # Creates the form with the info from workout
-                        form = self.form_class(instance=workout)
-                        # Gets the logs for graphing
-                        graph_logs = workout_info.get_graph_logs()
-
-                        # Gets the total volume for the workout
-                        workout_volume = 0
-                        for log in workout_info.logs:
-                            workout_volume += log_volume(log)
-
-                        # Unpacks data for chart.js
-                        labels = []
-                        volumes = []
-                        for log in graph_logs:
-                            volumes.append(log_volume(log))
-                            labels.append(log.created_at)
-
-                    context = {
-                        'workout': workout,
-                        'workout_exercises': workout_info.get_workout_exercises(),
-                        'total_logs_count': workout_info.get_log_count(),
-                        'last_workout': workout_info.get_latest_log(),
-                        'workout_existing_name': workout_info.workout.workout_name,
-                        'workout_existing_desc': workout_info.workout.workout_desc,
-                        'workout_volume': workout_volume,
-                        'volumes': volumes,
-                        'labels': labels,
-                        'form': form,
-                        'name_error': True
+                elif form.cleaned_data['workout_name'] not in existing_workout_names:
+                    workout.save()
+                    kwargs = {
+                        'pk': pk,
                     }
-                    return render(request, self.template_name, context)
+                    return HttpResponseRedirect(reverse('workout:workout_detail', kwargs=kwargs))
 
                 else:
-                    # Save workout since it has a unique name for the user
-                    workout.save()
-                    kwargs = {
-                        'pk': pk,
+                    context = {
+                        'form': form,
+                        'existing_workout_name': existing_workout_name,
+                        'existing_workout_names': existing_workout_names,
+                        'name_error': 'You cannot have two workouts with the same name!'
                     }
-                    return HttpResponseRedirect(reverse('workout:workout_detail', kwargs=kwargs))
-
-            else:
-                workout_exercises = Exercise.objects.filter(workout=workout_existing)
-                context = {
-                    'workout': workout_existing,
-                    'workout_exercises': workout_exercises,
-                    'form': form,
-                    'name_error': False,
-                }
-                return render(request, self.template_name, context)
-
+                    return render(request, self.template_name, context=context)
         else:
-            return Http404('This is not your workout.')
-
+            raise Http404('This is not your workout.')
 
 class WorkoutDelete(LoginRequiredMixin, generic.edit.DeleteView):
     '''Deletes the selected workout'''
@@ -291,7 +237,7 @@ class WorkoutDelete(LoginRequiredMixin, generic.edit.DeleteView):
             if workout.user == self.request.user:
                 return super(WorkoutDelete, self).post(request)
             else:
-                return Http404('This is not your workout.')
+                raise Http404('This is not your workout.')
 
 class ExerciseDelete(LoginRequiredMixin, generic.edit.DeleteView):
     '''Deletes the selected workout'''
@@ -324,7 +270,7 @@ class ExerciseDelete(LoginRequiredMixin, generic.edit.DeleteView):
             if exercise.user == self.request.user:
                 return super(ExerciseDelete, self).post(request)
             else:
-                return Http404('This is not your exercise.')
+                raise Http404('This is not your exercise.')
 
 class ExerciseCreate(LoginRequiredMixin, View):
     template_name = 'workout/exercise_create.html'
@@ -351,7 +297,7 @@ class ExerciseCreate(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         else:
-            return Http404('This is not your workout')
+            raise Http404('This is not your workout')
 
     def post(self, request, pk):
         workout = get_object_or_404(Workout, id=pk)
@@ -373,91 +319,6 @@ class ExerciseCreate(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse('workout:workout_detail', kwargs=kwargs))
 
         else:
-            return Http404('This is not your workout.')
+            raise Http404('This is not your workout.')
 
 # ------------------------------------------------------------------------------
-
-
-# class WorkoutEdit(LoginRequiredMixin, View):
-#     '''Renders the view that allows users to edit workouts/exercises'''
-#     # Class attributes to store template information, login controls, forms,
-#     # and variables
-#     template_name = 'workout/workout_edit.html'
-#     login_url = 'home:login'
-#     form_class = WorkoutCreationForm
-#
-#     def get(self, request, pk):
-#         '''
-#         Creates the GET method for the edit view
-#         '''
-#         workout = Workout.objects.get(id=pk)
-#         if workout.user == self.request.user:
-#             workout_exercises = Exercise.objects.filter(workout=workout)
-#             # Creates forms with associated objects
-#             form = self.form_class(instance=workout)
-#
-#             context = {
-#                 'workout': workout,
-#                 'workout_exercises': workout_exercises,
-#                 'form': form,
-#                 'name_error': False,
-#             }
-#             return render(request, self.template_name, context)
-#         else:
-#             return Http404('This is not your workout.')
-#
-#
-#
-#     def post(self, request, pk):
-#         '''Creates the POST method for the edit view'''
-#         workout_existing = Workout.objects.get(id=pk)
-#         if workout_existing.user == self.request.user:
-#             workout_existing_name = workout_existing.workout_name
-#
-#             # Passes the form information into the workout form and exercise
-#             # formset for processing
-#             form = self.form_class(self.request.POST, instance=workout_existing)
-#
-#             # Checks if the forms are valid
-#             if form.is_valid():
-#                 workout = form.save(commit=False)
-#                 # Gets existing workout names
-#                 existing_workout_names = Workout.objects.filter(user=self.request.user).values_list('workout_name', flat=True)
-#
-#                 if form.cleaned_data['workout_name'] == workout_existing_name:
-#                     workout.save()
-#                     kwargs = {
-#                         'pk': pk,
-#                     }
-#                     return HttpResponseRedirect(reverse('workout:workout_detail', kwargs=kwargs))
-#
-#                 elif form.cleaned_data['workout_name'] in existing_workout_names:
-#                     workout_exercises = Exercise.objects.filter(workout=workout_existing)
-#                     context = {
-#                         'workout': workout_existing,
-#                         'workout_exercises': workout_exercises,
-#                         'form': form,
-#                         'name_error': True,
-#                     }
-#                     return render(request, self.template_name, context)
-#
-#                 else:
-#                     # Save workout since it has a unique name for the user
-#                     workout.save()
-#                     kwargs = {
-#                         'pk': pk,
-#                     }
-#                     return HttpResponseRedirect(reverse('workout:workout_detail', kwargs=kwargs))
-#
-#             else:
-#                 workout_exercises = Exercise.objects.filter(workout=workout_existing)
-#                 context = {
-#                     'workout': workout_existing,
-#                     'workout_exercises': workout_exercises,
-#                     'form': form,
-#                     'name_error': False,
-#                 }
-#                 return render(request, self.template_name, context)
-#
-#         else:
-#             return Http404('This is not your workout.')

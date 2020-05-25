@@ -4,7 +4,7 @@
         type: 'line',
         data: data = {
             labels: [
-                {% for label in labels %}
+                {% for label in chart_data.1 %}
                     '{{ label.date }}',
                 {% endfor %}
             ],
@@ -14,7 +14,7 @@
                     fill: false,
                     borderColor: '#b3b3b3',
                     pointBackgroundColor: '#b3b3b3',
-                    data: {{ volumes|safe }}
+                    data: {{ chart_data.0|safe }}
                 }
             ]
         },

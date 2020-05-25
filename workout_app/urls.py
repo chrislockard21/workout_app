@@ -14,8 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
 from django.contrib.auth import views as auth_views
+from home.forms import CustomPasswordResetForm, CustomSetPasswordForm, CustomLoginForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,8 +24,52 @@ urlpatterns = [
     path('workout/', include('workout.urls', namespace='workout')),
     path('log/', include('log.urls', namespace='log')),
     path('user_profile/', include('user_profile.urls', namespace='user_profile')),
-    path('password_reset_confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="home/password_reset_confirm.html"), name="password_reset_confirm"),
-    path('password_reset/', auth_views.PasswordResetView.as_view(template_name="home/password_reset.html"), name="password_reset"),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name="home/password_reset_done.html"), name="password_reset_done"),
-    path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='home/password_reset_complete.html'), name='password_reset_complete')
+
+    # Login and logout funcitionality
+    path(
+        'login/',
+        auth_views.LoginView.as_view(
+            template_name='home/login.html', authentication_form=CustomLoginForm
+        ),
+        name='login'
+    ),
+    path(
+        'logout/',
+        auth_views.LogoutView.as_view(
+            next_page=reverse_lazy('home:index')
+        ),
+        name='logout'
+    ),
+
+    # Password reset
+    # Django does not like routing to namespaces with these views, will look into this later
+    path(
+        'password_reset_confirm/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name='home/password_reset_confirm.html',
+            form_class=CustomSetPasswordForm
+        ),
+        name='password_reset_confirm'
+    ),
+    path(
+        'password_reset/',
+        auth_views.PasswordResetView.as_view(
+            template_name="home/password_reset.html",
+            form_class=CustomPasswordResetForm
+        ),
+        name="password_reset"
+    ),
+    path(
+        'password_reset/done/',
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="home/password_reset_done.html"
+        ),
+        name="password_reset_done"
+    ),
+    path(
+        'password_reset_complete/',
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name='home/password_reset_complete.html'
+        ), name='password_reset_complete'
+    ),
 ]

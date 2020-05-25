@@ -5,7 +5,7 @@ Creator - chrislockard21
 Used to render the pages associated with the home application. These views
 also leverage the models created in the other applications to give the user
 more information on login. This file also contains a Statistics object to
-make the collection of statistics OOO.
+make the collection of statistics OOP.
 '''
 
 
@@ -54,7 +54,7 @@ class Statistics():
                 else:
                     # Convert kg to lbs
                     volume += set.weight*2.20462*set.reps
-        return round(volume, 2)
+        return '{:,}'.format(round(volume, 2))
 
     def max_exercise(self):
         '''Gets the most used exercise by the user'''
@@ -107,7 +107,6 @@ class Index(View):
                 'logged_in': True,
                 'form': form,
             }
-            return render(request, self.template_name, context)
 
         else:
             context = {
@@ -159,38 +158,5 @@ class Register(View):
                         return redirect('home:index')
 
         return render(request, self.template_name, {'form':form})
-
-class Logout(TemplateView):
-    '''Logs the user out of the current session'''
-    template_name = 'home/logout.html'
-
-    def get(self, request):
-        logout(request)
-        return redirect('home:index')
-
-class Login(View):
-    '''Renders the login page'''
-    template_name = 'home/login.html'
-
-    def get(self, request):
-        '''
-        Defines the GET method for the login page
-        '''
-        return render(request, self.template_name)
-
-    def post(self, request):
-        '''
-        Defines the POST method for the login page
-        '''
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('home:index')
-        else:
-            login_failed = True
-            return render(request, self.template_name, {'login_failed':login_failed})
 
 # ------------------------------------------------------------------------------
