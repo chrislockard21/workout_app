@@ -135,6 +135,10 @@ LOGIN_REDIRECT_URL = 'home:index'
 
 STATIC_URL = '/static/'
 
+FIXTURE_DIRS = [
+    os.path.join(BASE_DIR, 'workout/fixture'),
+]
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'home/static'),
     os.path.join(BASE_DIR, 'workout/static'),

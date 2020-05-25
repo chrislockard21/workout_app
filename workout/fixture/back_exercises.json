@@ -1,0 +1,82 @@
+[
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 1,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Pullup"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 2,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Deadlift"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 3,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Chinup"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 4,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Dumbbell rows"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 5,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Cable rows"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 6,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Bent over Barbell rows"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 7,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Reverse pec deck"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 8,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Reverse fly"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 9,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Superman"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 10,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Swimmers"
+        }
+    }
+]

@@ -1,0 +1,82 @@
+[
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 1,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Barbell bench press"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 2,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Incline barbell bench press"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 3,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Dumbbell bench press"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 4,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Incline dumbbell bench press"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 5,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Push-up"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 6,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Fly"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 7,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Chest press"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 8,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Incline fly"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 9,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Dip"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 10,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Decline barbell bench press"
+        }
+    }
+]
