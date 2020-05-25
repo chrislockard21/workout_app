@@ -34,7 +34,7 @@ class LogCreate(LoginRequiredMixin, View):
     user will never see this view rendered, it is responsible only for creating
     the object
     '''
-    login_url = 'home:login'
+    login_url = 'login'
 
     def get(self, request, pk):
         '''
@@ -69,7 +69,7 @@ class LogDetail(LoginRequiredMixin, View):
     This view renders an individual log so that users can select exercises to
     edit
     '''
-    login_url = 'home:login'
+    login_url = 'login'
     template_name = 'log/log_details.html'
 
     def get(self, request, log_pk):
@@ -106,7 +106,7 @@ class LogExerciseSetAdd(LoginRequiredMixin, View):
     forms on one page. After adding a set they are directed to the same page
     with either the new set or form errors
     '''
-    login_url = 'home:login'
+    login_url = 'login'
     template_name = 'log/log_exercise_set_add.html'
     # SetCreationFormset = inlineformset_factory(Exercise, Set, form=LiftingSetForm, can_delete=True, extra=0)
 
@@ -201,7 +201,7 @@ class LogClose(LoginRequiredMixin, View):
     '''
     View to set the log to close and log sets into history.
     '''
-    login_url = 'home:login'
+    login_url = 'login'
 
     def get(self, request, log_pk):
         log = get_object_or_404(Log, pk=log_pk)
@@ -229,7 +229,7 @@ class LogClose(LoginRequiredMixin, View):
 class SetDelete(LoginRequiredMixin, generic.edit.DeleteView):
     '''Deletes the selected workout'''
     template_name = 'log/set_delete.html'
-    login_url = "home:login"
+    login_url = "login"
 
     def get_object(self):
         '''

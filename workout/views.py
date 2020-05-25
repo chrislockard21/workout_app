@@ -59,7 +59,7 @@ class WorkoutCreate(LoginRequiredMixin, View):
     '''
     # Class attributes to store template information and login controls
     template_name = 'workout/workout_create.html'
-    login_url = 'home:login'
+    login_url = 'login'
     form_class = WorkoutCreationForm
 
     def post(self, request):
@@ -112,7 +112,7 @@ class WorkoutDetail(LoginRequiredMixin, generic.detail.DetailView):
     model = Workout
     template_name = 'workout/workout_detail.html'
     form_class = WorkoutCreationForm
-    login_url = 'home:login'
+    login_url = 'login'
 
     def total_volume(self, logs):
         '''Function to caluclate volume of all logs'''
@@ -179,7 +179,7 @@ class WorkoutDetail(LoginRequiredMixin, generic.detail.DetailView):
 class WorkoutEdit(LoginRequiredMixin, View):
     template_name = 'workout/workout_edit.html'
     form_class = WorkoutCreationForm
-    login_url = 'home:login'
+    login_url = 'login'
 
     def post(self, request, pk):
         existing_workout = get_object_or_404(Workout, id=pk)
@@ -242,7 +242,7 @@ class WorkoutDelete(LoginRequiredMixin, generic.edit.DeleteView):
 class ExerciseDelete(LoginRequiredMixin, generic.edit.DeleteView):
     '''Deletes the selected workout'''
     template_name = 'workout/exercise_delete.html'
-    login_url = "home:login"
+    login_url = "login"
 
     def get_object(self):
         '''
@@ -274,7 +274,7 @@ class ExerciseDelete(LoginRequiredMixin, generic.edit.DeleteView):
 
 class ExerciseCreate(LoginRequiredMixin, View):
     template_name = 'workout/exercise_create.html'
-    login_url = 'home:login'
+    login_url = 'login'
     form_class = ExerciseForm
 
     def get(self, request, pk):

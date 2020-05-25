@@ -16,7 +16,7 @@ from django.utils import timezone
 class ProfileIndex(LoginRequiredMixin, View):
     template_name = 'user_profile/profile_index.html'
     form_class = OneRepMaxForm
-    login_url = 'home:login'
+    login_url = 'login'
 
     def get(self, request):
         prs = OneRepMax.objects.filter(user=request.user)
@@ -54,7 +54,7 @@ class ProfileIndex(LoginRequiredMixin, View):
 class ORMEdit(LoginRequiredMixin, View):
     template_name = 'user_profile/profile_orm_edit.html'
     OneRepMaxFormset = modelformset_factory(OneRepMax, form=OneRepMaxForm, extra=0, can_delete=True)
-    login_url = 'home:login'
+    login_url = 'login'
 
     def get(self, request):
         formset = self.OneRepMaxFormset(queryset=OneRepMax.objects.filter(user=request.user))
@@ -83,7 +83,7 @@ class ORMEdit(LoginRequiredMixin, View):
 
 class History(LoginRequiredMixin, View):
     template_name = 'user_profile/history.html'
-    login_url = 'home:login'
+    login_url = 'login'
 
     def get(self, request):
         log_history = LogHistory.objects.filter(user=request.user).order_by("-created_at")
