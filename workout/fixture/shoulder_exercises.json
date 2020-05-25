@@ -1,7 +1,7 @@
 [
     {
         "model": "workout.exercisebygroup",
-        "pk": 1,
+        "pk": 21,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Military press"
@@ -9,7 +9,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 2,
+        "pk": 22,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Dumbbell shoulder press"
@@ -17,7 +17,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 3,
+        "pk": 23,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Barbell shoulder press"
@@ -25,7 +25,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 4,
+        "pk": 24,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Front raises"
@@ -33,7 +33,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 5,
+        "pk": 25,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Latteral raises"
@@ -41,7 +41,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 6,
+        "pk": 26,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Face-pull"
@@ -49,7 +49,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 7,
+        "pk": 27,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Cable latteral raises"
@@ -57,7 +57,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 8,
+        "pk": 28,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Cable front raises"
@@ -65,7 +65,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 9,
+        "pk": 29,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Handstand pushups"
@@ -73,7 +73,7 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 10,
+        "pk": 30,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Arnold press"
