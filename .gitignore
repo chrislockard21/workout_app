@@ -1,6 +1,2 @@
-home/__pycache__/
-log/__pycache__/
-workout/__pycache__/
-user_profile/__pycache__/
-workout_app/__pycache__/
+**/__pycache__/
 *.DS_Store
