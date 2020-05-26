@@ -44,6 +44,10 @@ class ProfileIndex(LoginRequiredMixin, View):
         else:
             prs = OneRepMax.objects.filter(user=request.user)
             log_history = LogHistory.objects.filter(user=request.user, created_at__range=[timezone.now()-timedelta(days=30), timezone.now()]).order_by("-created_at")
+            log_set_history = {}
+            for log in log_history:
+                sets = SetHistory.objects.filter(user=request.user, log_history=log)
+                log_set_history[log] = sets
             context = {
                 'prs': prs,
                 'log_set_history': log_set_history,
