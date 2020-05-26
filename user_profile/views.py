@@ -5,11 +5,12 @@ from .models import OneRepMax
 from .forms import OneRepMaxForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.forms import modelformset_factory
+from django.forms import modelformset_factory, inlineformset_factory
 from log.models import LogHistory, SetHistory
 from datetime import datetime as dt
 from datetime import timedelta
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -53,26 +54,20 @@ class ProfileIndex(LoginRequiredMixin, View):
 
 class ORMEdit(LoginRequiredMixin, View):
     template_name = 'user_profile/profile_orm_edit.html'
-    OneRepMaxFormset = modelformset_factory(OneRepMax, form=OneRepMaxForm, extra=0, can_delete=True)
+    OneRepMaxFormset = inlineformset_factory(User, OneRepMax, form=OneRepMaxForm, extra=0)
     login_url = 'login'
 
     def get(self, request):
-        formset = self.OneRepMaxFormset(queryset=OneRepMax.objects.filter(user=request.user))
+        formset = self.OneRepMaxFormset(instance=request.user)
         context = {
             'formset': formset,
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
-        formset = self.OneRepMaxFormset(request.POST)
+        formset = self.OneRepMaxFormset(request.POST, instance=request.user)
         if formset.is_valid():
-            for form in formset:
-                pr = form.save(commit=False)
-                if form.cleaned_data.get('DELETE'):
-                    pr.delete()
-                else:
-                    pr.user = request.user
-                    pr.save()
+            formset.save()
 
             return HttpResponseRedirect(reverse('user_profile:profile_index'))
         else:

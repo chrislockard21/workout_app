@@ -8,7 +8,7 @@ unit_choices = (
 )
 
 class OneRepMaxForm(forms.ModelForm):
-    exercise = forms.ModelChoiceField(queryset=ExerciseByGroup.objects.all().order_by('exercise_name'),widget=forms.Select(attrs={'class': 'form-control'}))
+    exercise = forms.ModelChoiceField(queryset=ExerciseByGroup.objects.all().order_by('exercise_name'), widget=forms.Select(attrs={'class': 'form-control'}))
     weight = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), initial=0)
     unit = forms.CharField(widget=forms.Select(choices=unit_choices, attrs={'class': 'form-control'}))
 
