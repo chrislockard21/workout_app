@@ -1,0 +1,53 @@
+{% extends 'home/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-5" style="color: white">
+                    <h1 class="heading">About</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h1 class="reveal">About me</h1>
+                <hr class="reveal">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="reveal">@Author: Chris Lockard</p>
+                        <p class="reveal">@Email: chris.lockard21@gmail.com</p>
+                        <pre></pre>
+                        <p class="reveal">@Bio:</p>
+                        <p class="reveal">
+                            I am a self-taught programmer who loves to work out and keep fit.
+                            I wanted to make an application that I could use to hone my programming skills
+                            and also be something that people might want to use. I love web development
+                            and have a passion for working on open source projects so if you have any and are looking for help,
+                            let me know!
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <img class="reveal" style="width: 70%" src="{% static 'home/me.png' %}" alt="Image of author">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h1 class="reveal">About the app</h1>
+                <hr class="reveal">
+                <p class="reveal">
+                    Your health is important! The goal of this applicaiton is to give you a fun and interactive
+                    way to track your workouts to help you get to and keep going to the gym. Statisctics on your workout
+                    provide insight on your performance and help to keep you motivated. Set tracking allows you to enter detailed
+                    information on each set so that you can improve. A complete workout history allows you to see any of your past
+                    workouts and will stick around even after you delete a routine.
+                </p>
+                <p class="reveal">Everyone should be able to get in shape and feel better about themselves. My goal with this workout app is to help you do that!</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

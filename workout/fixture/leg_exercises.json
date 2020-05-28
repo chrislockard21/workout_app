@@ -1,0 +1,82 @@
+[
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 46,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Back sqaut"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 47,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Bodyweight squat"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 48,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Box Jumps"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 49,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Lunge"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 50,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Front squat"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 51,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Leg press"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 52,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Romanian deadlift"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 53,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Leg extension"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 54,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Leg curl"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 55,
+        "fields": {
+            "type": "LEGS",
+            "exercise_name": "Calf raises"
+        }
+    }
+]

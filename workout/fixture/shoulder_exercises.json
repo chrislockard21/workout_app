@@ -1,7 +1,7 @@
 [
     {
         "model": "workout.exercisebygroup",
-        "pk": 21,
+        "pk": 23,
         "fields": {
             "type": "SHOULDERS",
             "exercise_name": "Military press"
@@ -9,26 +9,10 @@
     },
     {
         "model": "workout.exercisebygroup",
-        "pk": 22,
-        "fields": {
-            "type": "SHOULDERS",
-            "exercise_name": "Dumbbell shoulder press"
-        }
-    },
-    {
-        "model": "workout.exercisebygroup",
-        "pk": 23,
-        "fields": {
-            "type": "SHOULDERS",
-            "exercise_name": "Barbell shoulder press"
-        }
-    },
-    {
-        "model": "workout.exercisebygroup",
         "pk": 24,
         "fields": {
             "type": "SHOULDERS",
-            "exercise_name": "Front raises"
+            "exercise_name": "Dumbbell overhead press"
         }
     },
     {
@@ -36,7 +20,7 @@
         "pk": 25,
         "fields": {
             "type": "SHOULDERS",
-            "exercise_name": "Latteral raises"
+            "exercise_name": "Barbell overhead press"
         }
     },
     {
@@ -44,7 +28,7 @@
         "pk": 26,
         "fields": {
             "type": "SHOULDERS",
-            "exercise_name": "Face-pull"
+            "exercise_name": "Front raise"
         }
     },
     {
@@ -52,7 +36,7 @@
         "pk": 27,
         "fields": {
             "type": "SHOULDERS",
-            "exercise_name": "Cable latteral raises"
+            "exercise_name": "Latteral raise"
         }
     },
     {
@@ -60,7 +44,7 @@
         "pk": 28,
         "fields": {
             "type": "SHOULDERS",
-            "exercise_name": "Cable front raises"
+            "exercise_name": "Face-pull"
         }
     },
     {
@@ -68,7 +52,7 @@
         "pk": 29,
         "fields": {
             "type": "SHOULDERS",
-            "exercise_name": "Handstand pushups"
+            "exercise_name": "Cable latteral raise"
         }
     },
     {
@@ -76,7 +60,39 @@
         "pk": 30,
         "fields": {
             "type": "SHOULDERS",
+            "exercise_name": "Cable front raise"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 31,
+        "fields": {
+            "type": "SHOULDERS",
+            "exercise_name": "External rotation"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 32,
+        "fields": {
+            "type": "SHOULDERS",
             "exercise_name": "Arnold press"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 33,
+        "fields": {
+            "type": "SHOULDERS",
+            "exercise_name": "Internal rotation"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 34,
+        "fields": {
+            "type": "SHOULDERS",
+            "exercise_name": "Machine shoulder press"
         }
     }
 ]

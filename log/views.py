@@ -4,26 +4,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import modelformset_factory
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponseServerError, Http404, HttpResponse
 from django import forms
-from workout.models import Workout, Exercise
+from workout.models import Workout, Exercise, ExerciseByGroup
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
-from .forms import SetForm
+from .forms import SetForm, ValidateExerciseForm
 from datetime import datetime, date, timedelta
 from user_profile.models import OneRepMax
-
-def log_volume(log):
-    '''Function to caluclate volume of a log'''
-    volume = 0
-    log_sets = Set.objects.filter(log=log)
-    for set in log_sets:
-        if set.unit == 'lbs':
-            volume += set.weight*set.reps
-        else:
-            volume += set.weight*2.20462*set.reps
-    return volume
+from home.statistics import Statistics
 
 # Create your views here.
 
@@ -64,6 +54,8 @@ class LogCreate(LoginRequiredMixin, View):
         else:
             return Http404('This is not your workout.')
 
+# Re-write as detail view
+
 class LogDetail(LoginRequiredMixin, View):
     '''
     This view renders an individual log so that users can select exercises to
@@ -100,108 +92,72 @@ class LogDetail(LoginRequiredMixin, View):
         else:
             Http404('This is not your log.')
 
-class LogExerciseSetAdd(LoginRequiredMixin, View):
-    '''
-    Allows users to add sets to an exercise one by one to not create too many
-    forms on one page. After adding a set they are directed to the same page
-    with either the new set or form errors
-    '''
+class LogExerciseSetAdd(LoginRequiredMixin, generic.edit.FormView):
+    '''Form view to allow users to add sets to a log'''
     login_url = 'login'
     template_name = 'log/log_exercise_set_add.html'
-    # SetCreationFormset = inlineformset_factory(Exercise, Set, form=LiftingSetForm, can_delete=True, extra=0)
+    form_class = SetForm
 
-    def get(self, request, log_pk, exercise_pk):
-        '''
-        Creates the GET method for the set add view
-        '''
-        # Gets required objects
-        log = get_object_or_404(Log, pk=log_pk)
-        exercise = get_object_or_404(Exercise, pk=exercise_pk)
-        if exercise.user == self.request.user:
-            form = SetForm(None)
-            sets = Set.objects.filter(exercise=exercise, log=log)
-            history = SetHistory.objects.filter(exercise=exercise.exercise).order_by('-created_at')[:5]
-            try:
-                pr = OneRepMax.objects.get(user=request.user, exercise=exercise.exercise)
-            except:
-                pr = None
-            context = {
-                'form': form,
-                'sets': sets,
-                'log': log,
-                'pr': pr,
-                'exercise': exercise,
-                'history': history,
+    def get_success_url(self, **kwargs):
+        '''gets the success url with log/exercise kwargs'''
+        return reverse_lazy(
+            'log:log_exercise_set_add',
+            kwargs = {
+                'log_pk': self.kwargs.get('log_pk'),
+                'exercise_pk': self.kwargs.get('exercise_pk')
             }
-            return render(request, self.template_name, context)
-        else:
-            Http404('This is not your exercise.')
-
-    def post(self, request, log_pk, exercise_pk):
-        '''
-        Creates the POST method for the set add view and processes the form data
-        sent
-        '''
-        # Gets required objects
-        log = get_object_or_404(Log, pk=log_pk)
-        exercise = get_object_or_404(Exercise, pk=exercise_pk)
-        if exercise.user == self.request.user:
-            sets = Set.objects.filter(exercise=exercise)
-            form = SetForm(self.request.POST)
-
-            # Checks for a valid form (number values in the forms etc.)
-            if form.is_valid():
-                set = form.save(commit=False)
-                set.user = self.request.user
-                set.log = log
-                set.exercise = exercise
-                set.save()
-
-                # Gathers keys for the reverse function so that the url can be
-                # found
-                kwargs = {
-                    'log_pk': log_pk,
-                    'exercise_pk': exercise_pk,
-                }
-                return HttpResponseRedirect(reverse('log:log_exercise_set_add', kwargs=kwargs))
-
-            # Pass form errors to view context if the form is not valid
-            else:
-                try:
-                    pr = OneRepMax.objects.filter(user=request.user, exercise=exercise.exercise)
-                except:
-                    pr = None
-                history = SetHistory.objects.filter(exercise=exercise.exercise).order_by('-created_at')[:5]
-                context = {
-                    'form': form,
-                    'sets': sets,
-                    'log': log,
-                    'pr': pr,
-                    'exercise': exercise,
-                    'history': history,
-                }
-                return render(request, self.template_name, context)
-        else:
-            Http404('This is not your exercise')
-
-def create_history(sets, request, log_history):
-    for set in sets:
-        new_history = SetHistory.objects.create(
-            user=request.user,
-            log_history = log_history,
-            exercise = set.exercise.exercise,
-            reps = set.reps,
-            weight = set.weight,
-            unit = set.unit,
-            difficulty = set.difficulty,
-            notes = set.notes
         )
+
+    def get_context_data(self, **kwargs):
+        '''Gets extra context data for the view'''
+        context = super(LogExerciseSetAdd, self).get_context_data(**kwargs)
+        log = get_object_or_404(Log, id=self.kwargs.get('log_pk'))
+        context['log'] = log
+        exercise = get_object_or_404(Exercise, id=self.kwargs.get('exercise_pk'))
+        context['exercise'] = exercise
+        if log.user == self.request.user:
+            context['sets'] = Set.objects.filter(exercise=exercise, log=log)
+            context['history'] = SetHistory.objects.filter(exercise=exercise.exercise).order_by('-created_at')[:5]
+            try:
+                context['pr'] = OneRepMax.objects.get(user=request.user, exercise=exercise.exercise)
+            except:
+                context['pr'] = None
+        else:
+            raise Http404
+        return context
+
+    def form_valid(self, form):
+        '''Function executes if a form is valid'''
+        log = get_object_or_404(Log, id=self.kwargs.get('log_pk'))
+        exercise = get_object_or_404(Exercise, id=self.kwargs.get('exercise_pk'))
+        if log.user == self.request.user:
+            set = form.save(commit=False)
+            set.user = self.request.user
+            set.log = log
+            set.exercise = exercise
+            set.save()
+            return super(LogExerciseSetAdd, self).form_valid(form)
+        else:
+            raise Http404
 
 class LogClose(LoginRequiredMixin, View):
     '''
     View to set the log to close and log sets into history.
     '''
     login_url = 'login'
+
+    def create_history(self, sets, request, log_history):
+        for set in sets:
+            new_history = SetHistory.objects.create(
+                user=request.user,
+                log_history = log_history,
+                exercise = set.exercise.exercise,
+                reps = set.reps,
+                weight = set.weight,
+                unit = set.unit,
+                difficulty = set.difficulty,
+                notes = set.notes
+            )
 
     def get(self, request, log_pk):
         log = get_object_or_404(Log, pk=log_pk)
@@ -213,7 +169,7 @@ class LogClose(LoginRequiredMixin, View):
                 sets = Set.objects.filter(log=log)
                 log_history = LogHistory.objects.create(user=request.user, workout=log.workout)
 
-                create_history(sets, request, log_history)
+                self.create_history(sets, request, log_history)
 
                 # set log status to closed moving it to logical archive
                 log.closed_at = datetime.now()
@@ -231,12 +187,12 @@ class SetDelete(LoginRequiredMixin, generic.edit.DeleteView):
     template_name = 'log/set_delete.html'
     login_url = "login"
 
-    def get_object(self):
-        '''
-        Defines what object to get on delete
-        '''
-        id_ = self.kwargs.get("set_pk")
-        return get_object_or_404(Set, id=id_)
+    def get_object(self, queryset=None):
+        '''Ensures the user owns the object'''
+        obj = Set.objects.get(id=self.kwargs.get('set_pk'))
+        if obj.user != self.request.user:
+            raise Http404
+        return obj
 
     def get_success_url(self):
         log_pk = self.kwargs.get('log_pk')
@@ -260,4 +216,62 @@ class SetDelete(LoginRequiredMixin, generic.edit.DeleteView):
             if set.user == self.request.user:
                 return super(SetDelete, self).post(request)
             else:
-                return Http404('This is not your set.')
+                raise Http404
+
+class StatisticsView(LoginRequiredMixin, generic.TemplateView):
+    template_name = "log/statistics.html"
+
+    def get_log_volume(self, log, sets):
+        '''Gets volume of a log (modified from other functions)'''
+        log_volume = 0
+        for set in sets:
+            if set.unit == 'lbs':
+                log_volume += set.weight*set.reps
+            else:
+                log_volume += set.weight*2.20462*set.reps
+        return log_volume
+
+    def get_chart_data(self, user, exercise):
+        '''Method to get the date and volume sum for the selected exercise'''
+        logs = LogHistory.objects.filter(user=user).reverse()
+        obs = {}
+        for log in logs:
+            sets = SetHistory.objects.filter(log_history=log, exercise=exercise)
+            if len(sets) > 0:
+                obs[log.created_at] = self.get_log_volume(log, sets)
+        return obs
+
+    def get_exercise_volume(self, user, exercise):
+        sets = SetHistory.objects.filter(user=user, exercise=exercise)
+        volume = 0
+        for set in sets:
+            if set.unit == 'lbs':
+                volume += set.weight*set.reps
+            else:
+                volume += set.weight*2.20462*set.reps
+        return volume
+
+    def get_context_data(self, **kwargs):
+        '''Gets extra context'''
+        context = super().get_context_data(**kwargs)
+        summary_statistics = Statistics(self.request)
+        if kwargs.get('exercise'):
+            context['selected_exercise'] = get_object_or_404(ExerciseByGroup, id=kwargs.get('exercise'))
+            context['exercise_volume'] = '{:,}'.format(self.get_exercise_volume(kwargs.get('user'), kwargs.get('exercise')))
+            context['chart_data'] = self.get_chart_data(kwargs.get('user'), kwargs.get('exercise'))
+            context['exercise_freq'] = summary_statistics.exercise_use_rate(kwargs.get('exercise'))
+        context['exercises'] = ExerciseByGroup.objects.all().order_by('exercise_name')
+        context['log_count'] = summary_statistics.log_count()
+        context['open_log_count'] = summary_statistics.open_log_count()
+        context['max_exercise'] = summary_statistics.max_exercise()
+        context['volume'] = summary_statistics.total_volume()
+        context['frequency'] = summary_statistics.max_exercise()
+        return context
+
+    def post(self, request):
+        form = ValidateExerciseForm(request.POST)
+        if form.is_valid():
+            exercise_pk = int(form.cleaned_data['exercise'])
+        # After form is submitted, function will render its own context with
+        # the exercise id in kwargs
+        return render(request, self.template_name, context=self.get_context_data(user=request.user, exercise=exercise_pk))

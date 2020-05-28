@@ -62,6 +62,13 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <a class="btn btn-danger reveal" href="{% url 'workout:workout_delete' pk=workout.id %}">Delete workout</a>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

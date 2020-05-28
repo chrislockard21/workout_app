@@ -4,7 +4,7 @@
         "pk": 1,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Barbell bench press"
+            "exercise_name": "Push-up"
         }
     },
     {
@@ -12,7 +12,7 @@
         "pk": 2,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Incline barbell bench press"
+            "exercise_name": "Barbell bench press"
         }
     },
     {
@@ -28,7 +28,7 @@
         "pk": 4,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Incline dumbbell bench press"
+            "exercise_name": "Incline barbell bench press"
         }
     },
     {
@@ -36,7 +36,7 @@
         "pk": 5,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Push-up"
+            "exercise_name": "Incline Dumbbell bench press"
         }
     },
     {
@@ -44,7 +44,7 @@
         "pk": 6,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Fly"
+            "exercise_name": "Close-grip barbell bench press"
         }
     },
     {
@@ -52,7 +52,7 @@
         "pk": 7,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Chest press"
+            "exercise_name": "Chest press (machine)"
         }
     },
     {
@@ -60,7 +60,7 @@
         "pk": 8,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Incline fly"
+            "exercise_name": "Fly"
         }
     },
     {
@@ -68,7 +68,7 @@
         "pk": 9,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Dip"
+            "exercise_name": "Incline fly"
         }
     },
     {
@@ -76,7 +76,23 @@
         "pk": 10,
         "fields": {
             "type": "CHEST",
-            "exercise_name": "Decline barbell bench press"
+            "exercise_name": "Lying pullovers"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 11,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Cable fly"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 12,
+        "fields": {
+            "type": "CHEST",
+            "exercise_name": "Decline cable fly"
         }
     }
 ]

@@ -1,0 +1,82 @@
+[
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 56,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Crunch"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 57,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Plank"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 58,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Glute bridge"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 59,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Roll out"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 60,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Russian twist"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 61,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Side plank"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 62,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Sit-up"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 63,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Oblique crunches"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 64,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Leg lifts"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 65,
+        "fields": {
+            "type": "ABS",
+            "exercise_name": "Reverse crunches"
+        }
+    }
+]

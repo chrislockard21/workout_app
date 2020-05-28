@@ -1,26 +1,10 @@
 [
     {
         "model": "workout.exercisebygroup",
-        "pk": 11,
-        "fields": {
-            "type": "BACK",
-            "exercise_name": "Pullup"
-        }
-    },
-    {
-        "model": "workout.exercisebygroup",
-        "pk": 12,
-        "fields": {
-            "type": "BACK",
-            "exercise_name": "Deadlift"
-        }
-    },
-    {
-        "model": "workout.exercisebygroup",
         "pk": 13,
         "fields": {
             "type": "BACK",
-            "exercise_name": "Chinup"
+            "exercise_name": "Bent-over barbell rows"
         }
     },
     {
@@ -28,7 +12,7 @@
         "pk": 14,
         "fields": {
             "type": "BACK",
-            "exercise_name": "Dumbbell rows"
+            "exercise_name": "Deadlift"
         }
     },
     {
@@ -36,7 +20,7 @@
         "pk": 15,
         "fields": {
             "type": "BACK",
-            "exercise_name": "Cable rows"
+            "exercise_name": "Chin-ups"
         }
     },
     {
@@ -44,7 +28,7 @@
         "pk": 16,
         "fields": {
             "type": "BACK",
-            "exercise_name": "Bent over Barbell rows"
+            "exercise_name": "Dumbbell rows"
         }
     },
     {
@@ -52,7 +36,7 @@
         "pk": 17,
         "fields": {
             "type": "BACK",
-            "exercise_name": "Reverse pec deck"
+            "exercise_name": "Cable rows"
         }
     },
     {
@@ -68,7 +52,7 @@
         "pk": 19,
         "fields": {
             "type": "BACK",
-            "exercise_name": "Superman"
+            "exercise_name": "Reverse pec deck"
         }
     },
     {
@@ -76,7 +60,31 @@
         "pk": 20,
         "fields": {
             "type": "BACK",
-            "exercise_name": "Swimmers"
+            "exercise_name": "Pull-ups"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 21,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Lat pulldown"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 22,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Pressdown"
+        }
+    },
+    {
+        "model": "workout.exercisebygroup",
+        "pk": 23,
+        "fields": {
+            "type": "BACK",
+            "exercise_name": "Supermans"
         }
     }
 ]

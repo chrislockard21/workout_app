@@ -1,0 +1,67 @@
+{% extends 'log/base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="jumbotron banner">
+        <div class="container headerContainer">
+            <div class="row">
+                <div class="col-md-5" style="color: white">
+                    <h1 class="heading">{{ request.user|title }} Statistics</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h1 class="reveal">Summary</h1>
+                <hr class="reveal">
+                <p class="reveal">Here are some general statistics for you to see how good you have done so far!</p>
+                <p class="reveal">Completed logs: {{ log_count }}</p>
+                <p class="reveal">Open logs: {{ open_log_count }}</p>
+                <p class="reveal">Most used: {{ max_exercise.0 }} ({{ max_exercise.1 }})</p>
+                <p class="reveal">Total volume: {{ volume }} lbs</p>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-8 contentContainer">
+                <h1 class="reveal">Exercise statistics</h1>
+                <hr class="reveal">
+                <p class="reveal">Select exercise</p>
+                <div class="row">
+                    <div class="col-md-5">
+                        <form class="" method="post">
+                            {% csrf_token %}
+                            <select class="form-control reveal" name="exercise">
+                                {% for exercise in exercises %}
+                                    {% if exercise.id == selected_exercise.id %}
+                                        <option value="{{ exercise.id }}" selected>{{ exercise.exercise_name }}</option>
+                                    {% else %}
+                                        <option value="{{ exercise.id }}">{{ exercise.exercise_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <pre></pre>
+                            <button type="submit" name="button" class="btn btn-primary reveal">Go</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            {% if selected_exercise %}
+                <div class="col-md-8 contentContainer">
+                    <h1 class="reveal">{{ selected_exercise }}</h1>
+                    <p class="reveal">Total exercise volume: {{ exercise_volume }} lbs</p>
+                    <p class="reveal">Workouts using this exercise: {{ exercise_freq }}</p>
+                    <h3 class="reveal">Volume chart</h3>
+                    {% if chart_data %}
+                        <canvas style="margin-top: 5%; margin-bottom: 5%;" id="lineChart" width="100%" height="50%"></canvas>
+                    {% else %}
+                        <p class="reveal">You have not used this workout yet!</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% include "log/exercise_progres_chart.html" %}
+{% endblock %}

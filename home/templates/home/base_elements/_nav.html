@@ -9,12 +9,15 @@
             <a class="nav-link" href="{% url 'home:index' %}">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link disabled" href="#">Statistics</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'user_profile:profile_index' %}">Profile</a>
+            <a class="nav-link" href="{% url 'home:about' %}">About</a>
         </li>
         {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'log:statistics' %}">Statistics</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_profile:profile_index' %}">Profile</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">Logout</a>
             </li>

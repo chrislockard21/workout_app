@@ -18,38 +18,6 @@ from django.http import HttpResponseRedirect, Http404
 from django import forms
 from log.models import Log, Set
 
-# ------------------------------------------------------------------------------
-
-class WorkoutInfo():
-    '''Class to gather information on a workout'''
-    def __init__(self, request, pk):
-        self.user = request.user
-        self.workout = Workout.objects.get(id=pk)
-        self.logs =  Log.objects.filter(workout=self.workout, status='closed').order_by('-created_at')
-
-    def get_workout_exercises(self):
-        '''Get all exercises for the workout'''
-        return Exercise.objects.filter(workout=self.workout)
-
-    def get_log_count(self):
-        '''Get the log count for workout'''
-        return self.logs.count()
-
-    def get_latest_log(self):
-        '''Gets the latest log if there is one'''
-        if len(self.logs) > 0:
-            return self.logs[0]
-        else:
-            return None
-
-    def get_graph_logs(self):
-        '''Gets the logs ordered correctly for graphing'''
-        logs_ordered = self.logs.reverse()
-        if len(logs_ordered) >= 5:
-            return logs_ordered[len(logs_ordered) - 5:]
-        else:
-            return logs_ordered
-
 # Views ------------------------------------------------------------------------
 
 class WorkoutCreate(LoginRequiredMixin, View):
@@ -216,15 +184,16 @@ class WorkoutEdit(LoginRequiredMixin, View):
 
 class WorkoutDelete(LoginRequiredMixin, generic.edit.DeleteView):
     '''Deletes the selected workout'''
+    model = Workout
     template_name = 'workout/workout_delete.html'
     success_url = reverse_lazy('home:index')
 
-    def get_object(self):
-        '''
-        Defines what object to get on delete
-        '''
-        id_ = self.kwargs.get("pk")
-        return get_object_or_404(Workout, id=id_)
+    def get_object(self, queryset=None):
+        '''Ensures the user owns the object'''
+        obj = super(WorkoutDelete, self).get_object(queryset=queryset)
+        if obj.user != self.request.user:
+            raise Http404
+        return obj
 
     def post(self, request, pk):
         if 'cancel' in request.POST:
@@ -241,15 +210,16 @@ class WorkoutDelete(LoginRequiredMixin, generic.edit.DeleteView):
 
 class ExerciseDelete(LoginRequiredMixin, generic.edit.DeleteView):
     '''Deletes the selected workout'''
+    model = Exercise
     template_name = 'workout/exercise_delete.html'
     login_url = "login"
 
-    def get_object(self):
-        '''
-        Defines what object to get on delete
-        '''
-        id_ = self.kwargs.get("exercise_pk")
-        return get_object_or_404(Exercise, id=id_)
+    def get_object(self, queryset=None):
+        '''Ensures the user owns the object'''
+        obj = Exercise.objects.get(workout=self.kwargs.get('pk'), id=self.kwargs.get('exercise_pk'))
+        if obj.user != self.request.user:
+            raise Http404
+        return obj
 
     def get_success_url(self):
         pk = self.kwargs.get('pk')

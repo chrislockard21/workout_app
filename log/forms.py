@@ -28,3 +28,6 @@ class SetForm(forms.ModelForm):
             'difficulty',
             'notes'
         )
+
+class ValidateExerciseForm(forms.Form):
+    exercise = forms.IntegerField()
