@@ -64,27 +64,34 @@ class Register(generic.edit.FormView):
 
     def form_valid(self, form):
         '''Handles the form when valid'''
-        user = form.save(commit=False)
+        if self.request.POST.get('disclaimer') and self.request.POST.get('disclaimer') == 'checked':
+            user = form.save(commit=False)
 
-        # Gets the cleaned form data
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password1']
+            # Gets the cleaned form data
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
 
-        # Gets and sets the users password
-        if password == form.cleaned_data['password2']:
-            user.set_password(password)
-            user.save()
+            # Gets and sets the users password
+            if password == form.cleaned_data['password2']:
+                user.set_password(password)
+                user.save()
 
-            # Authenticates the user for initial login
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                # Logs in the user
-                if user.is_active:
-                    login(self.request, user)
+                # Authenticates the user for initial login
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    # Logs in the user
+                    if user.is_active:
+                        login(self.request, user)
 
-        return super(Register, self).form_valid(form)
+            return super(Register, self).form_valid(form)
+
+        else:
+            return render(self.request, self.template_name, context={'form': form, 'disclaimer_error': True})
 
 class AboutView(generic.TemplateView):
     template_name = "home/about.html"
+
+class DisclaimerView(generic.TemplateView):
+    template_name = "home/disclaimer.html"
 
 # ------------------------------------------------------------------------------
