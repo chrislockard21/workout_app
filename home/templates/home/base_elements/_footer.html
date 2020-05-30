@@ -13,11 +13,16 @@
                         <div class="contentContainer">
                             <h3>Helpful Links</h3>
                             <!-- <a href=""><p>My Workouts</p></a> -->
-                            <a href="{% url 'workout:workout_create' %}"><p>Create Workout</p></a>
-                            <!-- <a href="#"><p>Logging</p></a>
-                            <a href="#"><p>Statistics</p></a>
-                            <a href="#"><p>About</p></a>
-                            <a href="#"><p>Contact us</p></a> -->
+                            <a href="{% url 'home:index' %}"><p>Home</p></a>
+                            <a href="{% url 'home:about' %}"><p>About</p></a>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'log:statistics' %}"><p>Statistics</p></a>
+                                <a href="{% url 'user_profile:profile_index' %}"><p>Profile</p></a>
+                                <a href="{% url 'logout' %}"><p>logout</p></a>
+                            {% else %}
+                                <a href="{% url 'login' %}"><p>Login</p></a>
+                                <a href="{% url 'home:register' %}"><p>Register</p></a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
