@@ -30,7 +30,7 @@ class Log(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     closed_at = models.DateTimeField(null=True)
-    status = models.CharField(max_length=5)
+    status = models.CharField(max_length=6)
 
     def get_absolute_url(self):
         kwargs = {
